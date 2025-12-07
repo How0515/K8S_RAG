@@ -269,6 +269,31 @@ async def list_documents():
         return {"error": error_msg}
 
 
+@app.get("/documents/list", tags=["Documents"])
+async def list_all_documents():
+    """
+    저장된 모든 문서 목록 조회 (doc_id 포함)
+    
+    각 문서의 ID, 파일명, 청크 수를 확인할 수 있습니다.
+    """
+    try:
+        qdrant = get_qdrant_client()
+        documents = qdrant.list_documents()
+        return {
+            "total_documents": len(documents),
+            "documents": documents
+        }
+    except Exception as e:
+        error_msg = str(e)
+        if "validation error" in error_msg.lower() or "pydantic" in error_msg.lower():
+            return {
+                "error": "Qdrant 버전 호환성 문제",
+                "message": "문서 목록을 조회할 수 없습니다.",
+                "status": "degraded"
+            }
+        return {"error": error_msg}
+
+
 @app.delete("/documents/{doc_id}", tags=["Documents"])
 async def delete_document(doc_id: str):
     """문서 삭제"""

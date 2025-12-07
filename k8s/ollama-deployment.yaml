@@ -22,7 +22,7 @@ spec:
     spec:
       containers:
         - name: ollama
-          image: ollama/ollama:latest
+          image: cow5757/ollama:latest
           ports:
             - containerPort: 11434
               name: http

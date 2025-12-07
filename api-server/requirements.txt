@@ -8,4 +8,5 @@ sentence-transformers==2.7.0
 qdrant-client==1.11.1
 pypdf==3.17.4
 httpx==0.26.0
-pydantic==2.5.3
+pydantic==2.10.5
+pydantic-core==2.27.2

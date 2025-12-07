@@ -22,7 +22,7 @@ spec:
     spec:
       containers:
         - name: qdrant
-          image: qdrant/qdrant:latest
+          image: cow5757/qdrant:latest
           ports:
             - containerPort: 6333  # REST API
               name: rest
@@ -52,7 +52,9 @@ spec:
             periodSeconds: 5
       volumes:
         - name: qdrant-storage
-          emptyDir: {}
+          hostPath:
+            path: /var/lib/qdrant-data  # 호스트 경로
+            type: DirectoryOrCreate      # 없으면 생성
 ---
 # Qdrant Service
 apiVersion: v1
