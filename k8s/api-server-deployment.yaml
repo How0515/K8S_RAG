@@ -1,0 +1,73 @@
+# RAG API Server Deployment
+# FastAPI + LangGraph 기반 RAG 파이프라인 서버
+
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: rag-api-server
+  namespace: rag-system
+  labels:
+    app: rag-api-server
+    component: api
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: rag-api-server
+  template:
+    metadata:
+      labels:
+        app: rag-api-server
+        component: api
+    spec:
+      containers:
+        - name: rag-api-server
+          image: cow5757/rag-api-server:latest
+          imagePullPolicy: IfNotPresent
+          ports:
+            - containerPort: 8000
+              name: http
+          resources:
+            requests:
+              memory: "1Gi"
+              cpu: "500m"
+            limits:
+              memory: "2Gi"
+              cpu: "1000m"
+          env:
+            - name: QDRANT_HOST
+              value: "qdrant-service"
+            - name: OLLAMA_HOST
+              value: "ollama-service"
+            - name: PYTHONUNBUFFERED
+              value: "1"
+          livenessProbe:
+            httpGet:
+              path: /
+              port: 8000
+            initialDelaySeconds: 60
+            periodSeconds: 30
+          readinessProbe:
+            httpGet:
+              path: /health
+              port: 8000
+            initialDelaySeconds: 30
+            periodSeconds: 10
+---
+# RAG API Server Service
+apiVersion: v1
+kind: Service
+metadata:
+  name: rag-api-service
+  namespace: rag-system
+  labels:
+    app: rag-api-server
+spec:
+  selector:
+    app: rag-api-server
+  ports:
+    - name: http
+      port: 8000
+      targetPort: 8000
+      nodePort: 30080
+  type: NodePort

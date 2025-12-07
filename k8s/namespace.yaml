@@ -1,0 +1,10 @@
+# Namespace 정의
+# RAG 시스템의 모든 리소스를 격리하기 위한 네임스페이스
+
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: rag-system
+  labels:
+    app: rag-system
+    project: k8s-rag
